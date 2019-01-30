@@ -1,0 +1,34 @@
+<html>
+	<head>
+		<script type="text/javascript">
+			//Variables globales
+			var left_margin;
+			var mydiv;
+			var interval1;
+			
+			function init()
+			{	
+				//Initialisation de la marge gauche
+				left_margin=0;
+				//Tracé du carré
+				mydiv = document.createElement("div");
+				mydiv.style.width=100+"px";
+				mydiv.style.height=100+"px";
+				mydiv.style.background = "red";
+				document.body.appendChild(mydiv);
+				
+				interval1 = window.setInterval(deplacer_carre,100); //Compte a rebours
+				
+				function deplacer_carre(){
+					left_margin = left_margin+10;
+					mydiv.style.marginLeft = left_margin+"px";
+					if(mydiv.style.marginRight===0){
+						window.clearInterval(interval1);
+					}
+				}
+			}
+		</script>
+	</head>
+	<body onload='init()'> 
+	</body>
+</html>
