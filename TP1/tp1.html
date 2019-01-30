@@ -1,0 +1,31 @@
+<html>
+	<head>
+		<script type="text/javascript">
+			function init()
+			{
+				var n = 10;
+				
+				//Affichage
+				htext=document.createTextNode(n.toString());
+				madiv = document.getElementById('div1');
+				madiv.appendChild(htext);
+				
+				interval1 = window.setInterval(decompte,1000); //Compte a rebours
+				
+				//Fonction appelée toutes les secondes
+				function decompte(){
+					n=n-1;
+					htext.nodeValue = n.toString();
+					if(n===0)
+					{
+						window.clearInterval(interval1);
+					}	
+				}
+			}
+		</script>
+	</head>
+
+	<body onload='init();'>
+		<div id='div1'></div>
+	</body>
+</html>
