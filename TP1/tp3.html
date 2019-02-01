@@ -17,7 +17,12 @@
 				mydiv.style.background = "red";
 				document.body.appendChild(mydiv);
 				
-				interval1 = window.setInterval(deplacer_carre,100); //Compte a rebours
+				interval2 = window.setInterval(demarrer,2000);  //Compte a rebours initial
+				
+				function demarrer(){
+					window.clearInterval(interval2);  //Arrêt du compte a rebours initial
+					interval1 = window.setInterval(deplacer_carre,100); //Lancement du compte a rebours de deplacement
+				}
 				
 				function deplacer_carre(){	//deplace le carré
 					//Augmente la marge gauche
