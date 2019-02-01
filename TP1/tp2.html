@@ -22,13 +22,13 @@
 				function deplacer_carre(){
 					left_margin = left_margin+10;
 					mydiv.style.marginLeft = left_margin+"px";
-					if(mydiv.style.marginRight===0){
+					if(left_margin>=screen.availWidth-100){
 						window.clearInterval(interval1);
 					}
 				}
 			}
 		</script>
 	</head>
-	<body onload='init()'> 
+	<body onload='init()' style="padding:0px"> 
 	</body>
 </html>
