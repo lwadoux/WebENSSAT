@@ -1,0 +1,53 @@
+<html>
+	<head>
+		<script type="text/javascript">
+			//Variables globales
+			var left_margin;
+			var mydiv;
+			var interval;
+			
+			function init()
+			{	
+				//Initialisation de la marge gauche des trois carres
+				left_margin=[0,0,0,0,0,0,0,0,0,0];
+				//Tracé des carrés
+				mydiv = new Array(10);
+				for(let i = 0;i<10;i++){
+					mydiv[i] = document.createElement("div");
+					mydiv[i].style.width=50+"px";
+					mydiv[i].style.height=50+"px";
+					mydiv[i].style.background = "red";
+					mydiv[i].style.marginBottom=5+"px";
+					document.body.appendChild(mydiv[i]);
+				}
+				
+				interval2 = window.setInterval(demarrer,4000);  //Compte a rebours initial
+				
+				function demarrer(){
+					window.clearInterval(interval2);  //Arrêt du compte a rebours initial
+					//Lancement des comptes a rebours de deplacement des carres
+					interval = new Array(10);
+					for(let i=0;i<10;i++){
+						//avec un setTimeout pour lancer les déplacements a 1 seconde d'intervalle les uns des autres
+						window.setTimeout(function()
+											{
+												interval[i] = window.setInterval(function(){deplacer_carre(i);},100);
+											}, 1000*i);
+					}
+				}
+				
+				function deplacer_carre(i){	//deplace le carré i
+					//Augmente la marge gauche
+					left_margin[i] = left_margin[i]+10;
+					mydiv[i].style.marginLeft = left_margin[i]+"px";
+					//Si le bord de la page est atteint, arrêt du compte à rebours et du déplacement
+					if(left_margin[i]>=screen.availWidth-50){
+						window.clearInterval(interval[i]);
+					}
+				}
+			}
+		</script>
+	</head>
+	<body onload='init()'> 
+	</body>
+</html>
