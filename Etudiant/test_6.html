@@ -1,0 +1,44 @@
+<html>
+	<head>
+		<script type="text/javascript">
+			//Variables globales
+			var sprimage;
+			var context;
+			var canvas;
+			const numberofframes = 10;
+			var numeroframe;
+			function init()
+			{
+				//Affichage du premier sprite
+				canvas = document.getElementById('mycanvas');
+				context = canvas.getContext("2d");
+				sprimage = new Image();
+				numeroframe = 0;
+				sprimage.src = "./images/coin-sprite-animation.png";
+				sprimage.addEventListener("load",function(){context.drawImage(sprimage,0,0,100,100,0,0,100,100);});
+				//Demarrage de la boucle principale (demande de la premiere animation)
+				window.setTimeout(function(){window.requestAnimationFrame(recursiveAnim);},200);
+			}
+			function recursiveAnim(){
+				//Clear the canvas
+				context.clearRect(0,0,100,100);
+				//Mise a jour des compteurs
+				numeroframe += 1;
+				//Affichage
+				context.drawImage(sprimage,100*numeroframe,0,100,100,0,0,100,100);
+				//Si la pièce n'a pas fini de tourner, on redemande une animation
+				if(numeroframe<numberofframes){
+					//La cadence est volontairement ralentie par un setTimeout pour pouvoir prendre le temps d'observer la rotation
+					window.setTimeout(function(){window.requestAnimationFrame(recursiveAnim);},200);
+				}
+				//Sinon effacer la pièce
+				else{
+					context.clearRect(0,0,100,100);
+				}
+			}
+		</script>
+	</head>
+	<body onload='init()'> 
+	<canvas id='mycanvas' width="100" height="100"></canvas>
+	</body>
+</html>
