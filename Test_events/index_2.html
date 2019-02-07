@@ -8,16 +8,45 @@
 		<canvas id="heroAnimation"></canvas>
     </body>
 <script type="text/javascript">
+//Variables globales
+var sprimage;
+var context;
+var canvas;
+const numberofframes = 3;
+var ligne; //0 : gauche, 1 : droite, 2 : face, 3 : dos 
+var numeroframe;
 function init()
-{
-		var sprimage = new Image();
-		sprimage.src = "./hero.png";
-		var canvas = document.getElementById('heroAnimation');
-		canvas.width = 128;
-		canvas.height = 128;
-		var context = canvas.getContext("2d");
-		sprimage.addEventListener("load",function(){context.drawImage(sprimage,0,0,128,128,0,0,128,128);});
+{		
+	//Affichage du premier sprite
+	sprimage = new Image();
+	sprimage.src = "./hero.png";
+	canvas = document.getElementById('heroAnimation');
+	canvas.width = 128;
+	canvas.height = 128;
+	context = canvas.getContext("2d");
+	numeroframe = 0;
+	//Le personnage commencera l'animation de face
+	ligne = 2;
+	sprimage.addEventListener("load",function(){context.drawImage(sprimage,128*numeroframe,128*ligne,128,128,0,0,128,128);});
+	//Demarrage de la boucle principale (demande de la premiere animation)
+	window.setTimeout(function(){window.requestAnimationFrame(gameloop);},100);
 }
+function gameloop(){
+	//Clear the canvas
+	context.clearRect(0,0,128,128);
+	//Mise a jour des compteurs
+	numeroframe += 1;
+	//Affichage
+	context.drawImage(sprimage,128*numeroframe,128*ligne,128,128,0,0,128,128);
+	//Si on est arrivé à la quatrième colonne, on remet à zero le numero de la colonne
+	if(numeroframe>=numberofframes){
+		numeroframe=-1;
+	}
+	//Requête d'animation (volontairement ralentie pour par un setTimeout pour pouvoir prendre le temps d'observer les images sans clignotement
+	window.setTimeout(function(){window.requestAnimationFrame(gameloop);},100);
+}
+//La cadence est volontairement ralentie par un setTimeout pour pouvoir prendre le temps d'observer la rotation
+	//	window.setTimeout(function(){window.requestAnimationFrame(recursiveAnim);},200);
 window.addEventListener("keydown", function (event) {
   if (event.defaultPrevented) {
     return; // Should do nothing if the key event was already consumed.
@@ -25,16 +54,16 @@ window.addEventListener("keydown", function (event) {
 
   switch (event.key) {
     case "ArrowDown":
-      
+      ligne = 3;
       break;
     case "ArrowUp":
-      // Do something for "up arrow" key press.
+      ligne = 2;
       break;
     case "ArrowLeft":
-      // Do something for "left arrow" key press.
+      ligne = 0;
       break;
     case "ArrowRight":
-      // Do something for "right arrow" key press.
+      ligne = 1;
       break;
     case "Enter":
       // Do something for "enter" or "return" key press.
