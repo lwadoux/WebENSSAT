@@ -88,8 +88,6 @@ function gameloop(){
 	//Requête d'animation (volontairement ralentie pour par un setTimeout pour pouvoir prendre le temps d'observer les images sans clignotement
 	window.setTimeout(function(){window.requestAnimationFrame(gameloop);},100);
 }
-//La cadence est volontairement ralentie par un setTimeout pour pouvoir prendre le temps d'observer la rotation
-	//	window.setTimeout(function(){window.requestAnimationFrame(recursiveAnim);},200);
 window.addEventListener("keydown", function (event) {
   if (event.defaultPrevented) {
     return; // Should do nothing if the key event was already consumed.

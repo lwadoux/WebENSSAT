@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Events </title>
+    </head>
+    <body onload='init()'>
+		<canvas id="heroAnimation"></canvas>
+    </body>
+<script type="text/javascript">
+//Variables globales
+var sprimage;
+var context;
+var canvas;
+const numberofframes = 3;
+var ligne; //0 : gauche, 1 : droite
+var tab = [];
+var numeroframe;
+var posx;
+function init()
+{		
+	//Affichage du premier sprite
+	sprimage = new Image();
+	sprimage.src = "./hero.png";
+	canvas = document.getElementById('heroAnimation');
+	//Dimensionnement du canvas par rapport à la taille disponible de l'écran
+	canvas.width = screen.availWidth;
+	canvas.height = screen.availHeight;
+	context = canvas.getContext("2d");
+	numeroframe = 0;
+	posx = 0;
+	//Le personnage commencera l'animation de face
+	ligne = 2;
+	sprimage.addEventListener("load",function(){context.drawImage(sprimage,128*numeroframe,128*ligne,128,128,posx,0,128,128);});
+	//Demarrage de la boucle principale (demande de la premiere animation)
+	window.setTimeout(function(){window.requestAnimationFrame(gameloop);},100)
+}
+function gameloop(){
+	//Clear the canvas
+	context.clearRect(posx,0,128,128);
+	//Mise a jour des compteurs
+	numeroframe += 1;
+	//Si un click a été effectué pour déplacer le personnage
+	if(tab.length>0){
+		var x = tab.shift();
+		if(x<posx){	//Déplacement à gauche
+			ligne = 0;
+			if(posx-128>=0){
+				posx -= 128;
+				tab.unshift(x);
+			}
+			else{
+				posx = 0;
+			}
+		}
+		else if(x>posx+128){
+			ligne = 1;
+			if(posx+256<screen.availWidth){
+				posx += 128;
+				tab.unshift(x);
+			}
+			else{
+				posx = screen.availWidth-128;
+			}
+		}
+			
+	}
+	//Affichage
+	context.drawImage(sprimage,128*numeroframe,128*ligne,128,128,posx,0,128,128);
+	//Si on est arrivé à la quatrième colonne, on remet à zero le numero de la colonne
+	if(numeroframe>=numberofframes){
+		numeroframe=-1;
+	}
+	//Requête d'animation (volontairement ralentie pour par un setTimeout pour pouvoir prendre le temps d'observer les images sans clignotement
+	window.setTimeout(function(){window.requestAnimationFrame(gameloop);},100);
+}
+window.addEventListener("mousedown",function(event){
+  if (event.defaultPrevented) {
+    return; // Should do nothing if the key event was already consumed.
+  }
+
+  tab.push(event.clientX);
+
+  // Consume the event for suppressing "double action".
+  event.preventDefault();
+}, true);
+    </script>
