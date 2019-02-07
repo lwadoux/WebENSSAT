@@ -16,36 +16,74 @@ const numberofframes = 3;
 var ligne; //0 : gauche, 1 : droite, 2 : face, 3 : dos 
 var tab = [];
 var numeroframe;
+var posx;
+var posy;
 function init()
 {		
 	//Affichage du premier sprite
 	sprimage = new Image();
 	sprimage.src = "./hero.png";
 	canvas = document.getElementById('heroAnimation');
-	canvas.width = 128;
-	canvas.height = 128;
+	//Dimensionnement du canvas par rapport à la taille disponible de l'écran
+	canvas.width = screen.availWidth;
+	canvas.height = screen.availHeight;
 	context = canvas.getContext("2d");
 	numeroframe = 0;
+	posx = 0; posy = 0;
 	//Le personnage commencera l'animation de face
 	ligne = 2;
-	sprimage.addEventListener("load",function(){context.drawImage(sprimage,128*numeroframe,128*ligne,128,128,0,0,128,128);});
+	sprimage.addEventListener("load",function(){context.drawImage(sprimage,128*numeroframe,128*ligne,128,128,posx,posy,128,128);});
 	//Demarrage de la boucle principale (demande de la premiere animation)
-	window.setTimeout(function(){window.requestAnimationFrame(gameloop);},100);
+	window.setTimeout(function(){window.requestAnimationFrame(gameloop);},100)
 }
 function gameloop(){
 	//Clear the canvas
-	context.clearRect(0,0,128,128);
+	context.clearRect(posx,posy,128,128);
 	//Mise a jour des compteurs
 	numeroframe += 1;
-	//Affichage
-	context.drawImage(sprimage,128*numeroframe,128*ligne,128,128,0,0,128,128);
-	//Si on est arrivé à la quatrième colonne, on remet à zero le numero de la colonne
-	if(numeroframe>=numberofframes){
-		numeroframe=-1;
-	}
 	//Si une touche a été appuyée pour déplacer le personnage
 	if(tab.length>0){
 		ligne = tab.shift();
+		switch(ligne){
+			case 0:	//Déplacement à gauche
+				if(posx-128>0){
+					posx -= 128;
+				}
+				else{
+					posx = 0;
+				}
+				break;
+			case 1:	//Déplacement à droite
+				if(posx+256<screen.availWidth){
+					posx += 128;
+				}
+				else{
+					posx = screen.availWidth-128;
+				}
+				break;
+			case 2:	//Déplacement vers le bas, valeurs empiriques pour les marges car 256 et 128 ne suffisaient pas
+				if(posy+384<screen.availHeight){
+					posy += 128;
+				}
+				else{
+					posy = screen.availHeight-256;
+				}
+				break;
+			case 3:	//Déplacement vers le haut
+				if(posy-128>0){
+					posy -= 128;
+				}
+				else{
+					posy = 0;
+				}
+				break;
+		}
+	}
+	//Affichage
+	context.drawImage(sprimage,128*numeroframe,128*ligne,128,128,posx,posy,128,128);
+	//Si on est arrivé à la quatrième colonne, on remet à zero le numero de la colonne
+	if(numeroframe>=numberofframes){
+		numeroframe=-1;
 	}
 	//Requête d'animation (volontairement ralentie pour par un setTimeout pour pouvoir prendre le temps d'observer les images sans clignotement
 	window.setTimeout(function(){window.requestAnimationFrame(gameloop);},100);
