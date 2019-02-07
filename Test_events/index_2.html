@@ -14,6 +14,7 @@ var context;
 var canvas;
 const numberofframes = 3;
 var ligne; //0 : gauche, 1 : droite, 2 : face, 3 : dos 
+var tab = [];
 var numeroframe;
 function init()
 {		
@@ -42,6 +43,10 @@ function gameloop(){
 	if(numeroframe>=numberofframes){
 		numeroframe=-1;
 	}
+	//Si une touche a été appuyée pour déplacer le personnage
+	if(tab.length>0){
+		ligne = tab.shift();
+	}
 	//Requête d'animation (volontairement ralentie pour par un setTimeout pour pouvoir prendre le temps d'observer les images sans clignotement
 	window.setTimeout(function(){window.requestAnimationFrame(gameloop);},100);
 }
@@ -54,16 +59,16 @@ window.addEventListener("keydown", function (event) {
 
   switch (event.key) {
     case "ArrowDown":
-      ligne = 3;
+      tab.push(2);
       break;
     case "ArrowUp":
-      ligne = 2;
+      tab.push(3);
       break;
     case "ArrowLeft":
-      ligne = 0;
+      tab.push(0);
       break;
     case "ArrowRight":
-      ligne = 1;
+      tab.push(1);
       break;
     case "Enter":
       // Do something for "enter" or "return" key press.
