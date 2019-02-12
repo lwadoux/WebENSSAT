@@ -194,17 +194,31 @@ var enemies = {
 	}
 };
 //test
-function Enemy(x,y,speed){
+function Enemy(x,y,speed,type){
     this.x = x;
     this.yOrigine = y;
     this.y = this.yOrigine;
     this.xSpeed = speed;
+	this.type = type;
     this.exists = true;
-    this.height = 30;
-    this.width = 40;
-    this.img = new Image();
-    this.img.src = "./assets/Enemy/eSpritesheet_40x30.png";
-    this.cpt = 0;
+	if(this.type==="boss"){
+		this.height = 128;
+		this.width = 128;
+		this.img = new Image();
+		this.img.src = "./assets/Boss/head_sheet.png";
+	}
+	else{
+		this.height = 30;
+		this.width = 40;
+		this.img = new Image();
+		if(this.type==="normal"){
+			this.img.src = "./assets/Enemy/eSpritesheet_40x30.png";
+		}
+		else if(this.type==="orange"){
+			this.img.src = "./assets/Enemy/eSpritesheet_40x30_hue1.png";
+		}
+	}
+	this.cpt = 0;
 
     this.cptExplosion =  0;//10 images
     this.imgExplosion = new Image();
@@ -258,8 +272,18 @@ function Enemy(x,y,speed){
 	}
     this.update = function(){
        if(this.cptExplosion==0){//is not exploding
-            this.x +=   this.xSpeed ;
-            this.y = this.yOrigine+ ArenaHeight/3 * Math.sin(this.x / 100);
+            if(this.type==="boss"){
+				this.y = this.yOrigine+ ArenaHeight/3 * Math.sin(this.x / 100);
+			}
+			else{
+				this.x +=   this.xSpeed ;
+				if(this.type==="normal"){
+					this.y = this.yOrigine+ ArenaHeight/3 * Math.sin(this.x / 100);
+				}
+				else if(this.type==="orange"){
+					this.y = this.yOrigine+ ArenaHeight/3 * Math.cos(this.x / 50);
+				}
+			}
             var tmp = this.collision([player]);
                 if(tmp != null){
                     tmp.explodes();
@@ -386,7 +410,12 @@ function updateItems() {
      if(tics % 100 == 1) {
          var rand = Math.floor(Math.random() * ArenaHeight);
 
-        enemies.add(new Enemy(ArenaWidth, rand,-2));
+        enemies.add(new Enemy(ArenaWidth, rand,-2,"normal"));
+    }
+	if(tics % 300 == 1) {
+         var rand = Math.floor(Math.random() * ArenaHeight);
+
+        enemies.add(new Enemy(ArenaWidth, rand,-1,"orange"));
     }
     enemies.update();
 }
