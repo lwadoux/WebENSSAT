@@ -217,6 +217,9 @@ function Enemy(x,y,speed,type){
 		else if(this.type==="orange"){
 			this.img.src = "./assets/Enemy/eSpritesheet_40x30_hue1.png";
 		}
+		else if(this.type==="vert"){
+			this.img.src = "./assets/Enemy/eSpritesheet_40x30_hue4.png";
+		}
 	}
 	this.cpt = 0;
 
@@ -282,6 +285,9 @@ function Enemy(x,y,speed,type){
 				}
 				else if(this.type==="orange"){
 					this.y = this.yOrigine+ ArenaHeight/3 * Math.cos(this.x / 50);
+				}
+				else if(this.type==="vert"){
+					this.y = this.yOrigine+ ArenaHeight/3 * Math.sin(this.x / 150);
 				}
 			}
             var tmp = this.collision([player]);
@@ -409,13 +415,16 @@ function updateItems() {
     tics++;
      if(tics % 100 == 1) {
          var rand = Math.floor(Math.random() * ArenaHeight);
-
-        enemies.add(new Enemy(ArenaWidth, rand,-2,"normal"));
-    }
-	if(tics % 300 == 1) {
-         var rand = Math.floor(Math.random() * ArenaHeight);
-
-        enemies.add(new Enemy(ArenaWidth, rand,-1,"orange"));
+		var rand1 = Math.floor(Math.random() * 10);
+		if(rand1<2){
+			enemies.add(new Enemy(ArenaWidth, rand,-1,"orange"));
+		}
+		else if(rand1<5){
+			enemies.add(new Enemy(ArenaWidth, rand,-3,"vert"));
+		}
+		else{
+			enemies.add(new Enemy(ArenaWidth, rand,-2,"normal"));
+		}
     }
     enemies.update();
 }
