@@ -231,7 +231,7 @@ function Enemy(x,y,speed,type){
 		this.width = 128;
 		this.img = new Image();
 		this.img.src = "./assets/Boss/head_sheet.png";
-		this.nblives = 20;
+		this.nblives = 40;
 		this.up =true;
 	}
 	else{
@@ -243,10 +243,11 @@ function Enemy(x,y,speed,type){
 		}
 		else if(this.type==="orange"){
 			this.img.src = "./assets/Enemy/eSpritesheet_40x30_hue1.png";
-			this.nblives = 2;
+			this.nblives = 3;
 		}
 		else if(this.type==="vert"){
 			this.img.src = "./assets/Enemy/eSpritesheet_40x30_hue4.png";
+			this.nblives = 2;
 		}
 	}
 	this.cpt = 0;
@@ -477,7 +478,7 @@ function updateItems() {
 			enemies.add(new Enemy(ArenaWidth, rand,-2,"normal"));
 		}
     }
-	if(player.projectileSet.score>5 && player.fighting_boss==false){	//if the player's score is high enough, summons the boss
+	if(player.projectileSet.score>50 && player.fighting_boss==false){	//if the player's score is high enough, summons the boss
 		player.fighting_boss = true;
 		enemies.add(new Enemy(ArenaWidth-128, ArenaHeight/2,-2,"boss"));
 	}
