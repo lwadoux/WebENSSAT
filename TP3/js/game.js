@@ -144,9 +144,12 @@ function Projectile(x,y,speed,width,height,color){
         if(this.exists){
             this.x +=   this.xSpeed ;
             var tmp = this.collision([player].concat(enemies.tabEnemies));
+			console.log(tmp);
             if(tmp != null){
+				console.log("I touched something!");
                 tmp.explodes();
                 this.exists = false;
+				console.log(this);
             }
         }
     };
@@ -312,7 +315,11 @@ function Enemy(x,y,speed,type){
             if(tics % 5 == 1) {
                     this.cpt = (this.cpt + 1) % 6;
             }
-            //if(tics % 50 == 1) this.fire();
+			if(this.type==="boss"){
+				if(tics % 50 == 1) {
+					this.fire();
+				}
+			}
        }else{
             if(tics % 3 == 1) {
                 this.cptExplosion++;
@@ -440,16 +447,17 @@ function updateItems() {
          var rand = Math.floor(Math.random() * ArenaHeight);
 		var rand1 = Math.floor(Math.random() * 10);
 		if(rand1<2){
-			enemies.add(new Enemy(ArenaWidth, rand,-1,"orange"));
+			//enemies.add(new Enemy(ArenaWidth, rand,-1,"orange"));
 		}
 		else if(rand1<5){
-			enemies.add(new Enemy(ArenaWidth, rand,-3,"vert"));
+			//enemies.add(new Enemy(ArenaWidth, rand,-3,"vert"));
 		}
 		else{
-			enemies.add(new Enemy(ArenaWidth, rand,-2,"normal"));
+			//enemies.add(new Enemy(ArenaWidth, rand,-2,"normal"));
 		}
     }
-	if(player.projectileSet.score>5 && player.fighting_boss==false){	//if the player's score is high enough, summons the boss
+	//player.projectileSet.score>5 &&
+	if(player.fighting_boss==false){	//if the player's score is high enough, summons the boss
 		player.fighting_boss = true;
 		enemies.add(new Enemy(ArenaWidth-128, ArenaHeight/2,-2,"boss"));
 	}
