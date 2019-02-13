@@ -208,6 +208,7 @@ function Enemy(x,y,speed,type){
 		this.img = new Image();
 		this.img.src = "./assets/Boss/head_sheet.png";
 		this.nblives = 20;
+		this.up =true;
 	}
 	else{
 		this.height = 30;
@@ -235,9 +236,8 @@ function Enemy(x,y,speed,type){
     this.projectileSet = new ProjectileSet();
     this.explodes = function(){
 		this.nblives--;
-		if(this.nblives===0){
+		if(this.nblives<=0){
 			this.cptExplosion = 1;
-			this.exists = false;
 		}
     };
     this.collision = function(tabOfObjects){
@@ -281,7 +281,15 @@ function Enemy(x,y,speed,type){
     this.update = function(){
        if(this.cptExplosion==0){//is not exploding
             if(this.type==="boss"){
-				this.y = this.yOrigine+ ArenaHeight/3 * Math.sin(this.x / 100);
+				if(this.y<=0 || this.y>=ArenaHeight-128){
+					this.up = !this.up;
+				}
+				if(this.up){
+					this.y -= 1;
+				}
+				else{
+					this.y +=1;
+				}
 			}
 			else{
 				this.x +=   this.xSpeed ;
@@ -312,6 +320,14 @@ function Enemy(x,y,speed,type){
             if(this.cptExplosion>10){//end of animation
                 this.cptExplosion=0;
                 this.exists = false;
+				if(this.type === "boss"){
+					alert("Congratulations ! You won ! :) ");
+					player.nbOfLives=2;
+					player.projectileSet.score=0;
+					player.fighting_boss=false;
+					enemies.del();
+					tics = 0;
+				}
             }
         }
         this.projectileSet.update();
@@ -340,6 +356,7 @@ var player = {
     width : 64,
     nbOfLives : 2,
     timeToBeAlive : 0,
+	fighting_boss : false,
     fires : function(){
         var tmp = new Projectile(this.x+this.width,this.y+this.height/2,4,10,3,"rgb(200,0,0)");
         this.projectileSet.add(tmp);
@@ -355,6 +372,7 @@ var player = {
 				alert("GAME OVER !");
 				this.nbOfLives=2;
 				this.projectileSet.score=0;
+				this.fighting_boss=false;
 				enemies.del();
 				tics = 0;
             }
@@ -431,6 +449,10 @@ function updateItems() {
 			enemies.add(new Enemy(ArenaWidth, rand,-2,"normal"));
 		}
     }
+	if(player.projectileSet.score>5 && player.fighting_boss==false){	//if the player's score is high enough, summons the boss
+		player.fighting_boss = true;
+		enemies.add(new Enemy(ArenaWidth-128, ArenaHeight/2,-2,"boss"));
+	}
     enemies.update();
 }
 function drawScene() {
