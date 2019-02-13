@@ -201,11 +201,13 @@ function Enemy(x,y,speed,type){
     this.xSpeed = speed;
 	this.type = type;
     this.exists = true;
+	this.nblives = 1;	//default number of lives
 	if(this.type==="boss"){
 		this.height = 128;
 		this.width = 128;
 		this.img = new Image();
 		this.img.src = "./assets/Boss/head_sheet.png";
+		this.nblives = 20;
 	}
 	else{
 		this.height = 30;
@@ -216,6 +218,7 @@ function Enemy(x,y,speed,type){
 		}
 		else if(this.type==="orange"){
 			this.img.src = "./assets/Enemy/eSpritesheet_40x30_hue1.png";
+			this.nblives = 2;
 		}
 		else if(this.type==="vert"){
 			this.img.src = "./assets/Enemy/eSpritesheet_40x30_hue4.png";
@@ -231,7 +234,11 @@ function Enemy(x,y,speed,type){
 
     this.projectileSet = new ProjectileSet();
     this.explodes = function(){
-        this.cptExplosion = 1;
+		this.nblives--;
+		if(this.nblives===0){
+			this.cptExplosion = 1;
+			this.exists = false;
+		}
     };
     this.collision = function(tabOfObjects){
         var hits = null;
@@ -269,9 +276,7 @@ function Enemy(x,y,speed,type){
         this.projectileSet.clear();
     };
 	this.del = function(){
-		this.cptExplosion=0;
 		this.exists = false;
-		this.projectileSet.update();
 	}
     this.update = function(){
        if(this.cptExplosion==0){//is not exploding
@@ -284,16 +289,16 @@ function Enemy(x,y,speed,type){
 					this.y = this.yOrigine+ ArenaHeight/3 * Math.sin(this.x / 100);
 				}
 				else if(this.type==="orange"){
-					this.y = this.yOrigine+ ArenaHeight/3 * Math.cos(this.x / 50);
+					this.y = this.yOrigine+ ArenaHeight/2.5 * Math.cos(this.x / 50);
 				}
 				else if(this.type==="vert"){
-					this.y = this.yOrigine+ ArenaHeight/3 * Math.sin(this.x / 150);
+					this.y = this.yOrigine+ ArenaHeight/12 * Math.sin(this.x / 50);
 				}
 			}
             var tmp = this.collision([player]);
                 if(tmp != null){
-                    tmp.explodes();
-                    this.exists = false;
+					tmp.explodes();
+					this.exists = false;
                 }
 
             if(tics % 5 == 1) {
@@ -413,7 +418,7 @@ function updateItems() {
     "use strict"; 
     player.update();
     tics++;
-     if(tics % 100 == 1) {
+     if(tics % 80 == 1) {
          var rand = Math.floor(Math.random() * ArenaHeight);
 		var rand1 = Math.floor(Math.random() * 10);
 		if(rand1<2){
