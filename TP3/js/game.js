@@ -114,11 +114,26 @@ function Projectile(x,y,speed,width,height,color){
     this.height = height;
     this.color = color;
     this.exists = true;
-    this.collision = function(tabOfObjects){
+    this.collision_ennemy = function(tabOfObjects){
         var hits = null;
         var index;
         for(index in tabOfObjects){
             if ((tabOfObjects[index].cptExplosion ==0) && this.x < tabOfObjects[index].x + tabOfObjects[index].width &&
+                this.x + this.width > tabOfObjects[index].x &&
+                this.y < tabOfObjects[index].y + tabOfObjects[index].height &&
+                this.height + this.y > tabOfObjects[index].y) {
+                    // collision detected!
+                    hits = tabOfObjects[index];
+                    break;
+            }
+        }
+        return hits;  
+    };
+	this.collision_player = function(tabOfObjects){
+        var hits = null;
+        var index;
+        for(index in tabOfObjects){
+            if (this.x < tabOfObjects[index].x + tabOfObjects[index].width &&
                 this.x + this.width > tabOfObjects[index].x &&
                 this.y < tabOfObjects[index].y + tabOfObjects[index].height &&
                 this.height + this.y > tabOfObjects[index].y) {
@@ -143,14 +158,20 @@ function Projectile(x,y,speed,width,height,color){
     this.update = function(){
         if(this.exists){
             this.x +=   this.xSpeed ;
-            var tmp = this.collision([player].concat(enemies.tabEnemies));
-			console.log(tmp);
-            if(tmp != null){
-				console.log("I touched something!");
-                tmp.explodes();
-                this.exists = false;
-				console.log(this);
-            }
+			if(this.color==="rgb(0,200,0)"){
+				var tmp = this.collision_player([player]);
+				if(tmp != null){
+					tmp.explodes();
+					this.exists = false;
+				}
+			}
+            else{
+				var tmp = this.collision_ennemy(enemies.tabEnemies);
+				if(tmp != null){
+					tmp.explodes();
+					this.exists = false;
+				}
+			}
         }
     };
 }
@@ -447,17 +468,16 @@ function updateItems() {
          var rand = Math.floor(Math.random() * ArenaHeight);
 		var rand1 = Math.floor(Math.random() * 10);
 		if(rand1<2){
-			//enemies.add(new Enemy(ArenaWidth, rand,-1,"orange"));
+			enemies.add(new Enemy(ArenaWidth, rand,-1,"orange"));
 		}
 		else if(rand1<5){
-			//enemies.add(new Enemy(ArenaWidth, rand,-3,"vert"));
+			enemies.add(new Enemy(ArenaWidth, rand,-3,"vert"));
 		}
 		else{
-			//enemies.add(new Enemy(ArenaWidth, rand,-2,"normal"));
+			enemies.add(new Enemy(ArenaWidth, rand,-2,"normal"));
 		}
     }
-	//player.projectileSet.score>5 &&
-	if(player.fighting_boss==false){	//if the player's score is high enough, summons the boss
+	if(player.projectileSet.score>5 && player.fighting_boss==false){	//if the player's score is high enough, summons the boss
 		player.fighting_boss = true;
 		enemies.add(new Enemy(ArenaWidth-128, ArenaHeight/2,-2,"boss"));
 	}
