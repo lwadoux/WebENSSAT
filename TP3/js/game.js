@@ -471,7 +471,7 @@ function Bonus(x,y,speed,type){
 			}
             var tmp = this.collision([player]);
 			if(tmp != null){
-				this.exists = false;
+				this.explodes();
 			}
 
             if(tics % 7 == 1) {
@@ -485,7 +485,7 @@ function Bonus(x,y,speed,type){
                 this.cptExplosion=0;
                 this.exists = false;
 				if(this.type === "lifeplus"){
-					alert("Bonus caught ! ");
+					player.nbOfLives++;
 				}
             }
         }
@@ -595,7 +595,6 @@ function updateItems() {
     player.update();
     tics++;
 	//Enemy creation
-	/*
      if(tics % 80 == 1) {
         var rand = Math.floor(Math.random() * ArenaHeight);
 		var rand1 = Math.floor(Math.random() * 10);
@@ -608,14 +607,12 @@ function updateItems() {
 		else{
 			enemies.add(new Enemy(ArenaWidth, rand,-2,"normal"));
 		}
-		bonuses.add(new Bonus(ArenaWidth, rand,-1,"lifeplus"));
     }
-	*/
 	//Bonus creation
-	if(tics % 80 == 1) {
-		var rand = Math.floor(Math.random() * ArenaHeight);
-		var rand1 = Math.floor(Math.random() * 10);
-		bonuses.add(new Bonus(ArenaWidth, rand,-1,"lifeplus"));
+	if(tics % 800 == 1) {
+		var rand2 = Math.floor(Math.random() * ArenaHeight);
+		var rand3 = Math.floor(Math.random() * 10);
+		bonuses.add(new Bonus(ArenaWidth, rand2,-1,"lifeplus"));
 	}
 	if(player.projectileSet.score>50 && player.fighting_boss==false){	//if the player's score is high enough, summons the boss
 		player.fighting_boss = true;
