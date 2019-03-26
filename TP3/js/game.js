@@ -365,6 +365,135 @@ function Enemy(x,y,speed,type){
 /////////////////////////////////
 
 /////////////////////////////////
+// Bonus
+var bonuses = {
+    init : function(){
+        this.tabBonuses = new Array();
+    },
+    add : function (bonus) {
+        this.tabBonuses.push(bonus);  
+    },
+    remove : function () {  
+        this.tabBonuses.map(function(obj,index,array){
+            if(obj.exists == false ||obj.x >ArenaWidth || obj.x<0){
+                  delete array[index];
+            }
+        });
+    },
+    draw : function(){ 
+        this.tabBonuses.map(function(obj){
+            obj.draw();
+        });
+    },
+    clear : function(){
+       this.tabBonuses.map(function(obj){
+            obj.clear();
+        });
+    },
+    update : function(){
+
+        this.tabBonuses.map(function(obj){
+            obj.update();
+        });
+         this.remove();
+    },
+	del : function(){
+		this.tabBonuses.map(function(obj){
+            obj.del();
+        });
+		this.remove();
+	}
+};
+//test
+function Bonus(x,y,speed,type){
+    this.x = x;
+    this.yOrigine = y;
+    this.y = this.yOrigine;
+    this.xSpeed = speed;
+	this.type = type;
+    this.exists = true;
+	if(this.type==="lifeplus"){
+		this.height = 32;
+		this.width = 32;
+		this.img = new Image();
+		this.img.src = "assets/Bonus/lifeplus.png";
+	}
+
+	this.cpt = 0;
+
+    this.cptExplosion =  0;//10 images
+    this.imgExplosion = new Image();
+    this.imgExplosionHeight = 128;
+    this.imgExplosionWidth = 128;
+    this.imgExplosion.src = "./assets/Explosion/explosionSpritesheet_1280x128.png";
+
+    this.explodes = function(){
+		this.cptExplosion = 1
+    };
+    this.collision = function(tabOfObjects){
+        var hits = null;
+        var index;
+        for(index in tabOfObjects){
+            if (this.x < tabOfObjects[index].x + tabOfObjects[index].width &&
+                this.x + this.width > tabOfObjects[index].x &&
+                this.y < tabOfObjects[index].y + tabOfObjects[index].height &&
+                this.height + this.y > tabOfObjects[index].y) {
+                    // collision detected!
+                    hits = tabOfObjects[index];
+                    break;
+            }
+        }
+        return hits;
+    };
+	
+    this.draw = function(){ 
+
+        if(this.cptExplosion!=0){
+                conArena.drawImage(this.imgExplosion, this.cptExplosion*this.imgExplosionWidth, 0, this.imgExplosionWidth,this.imgExplosionHeight, this.x,this.y,this.width,this.height);
+        }else{
+            conArena.drawImage(this.img, this.cpt*this.width,0,this.width,this.height, this.x,this.y,this.width,this.height);
+        }
+    };
+	
+    this.clear = function(){
+        if(this.exists){
+            conArena.clearRect(this.x,this.y,this.width,this.height);
+        }
+    };
+	this.del = function(){
+		this.exists = false;
+	};
+    this.update = function(){
+       if(this.cptExplosion==0){//is not exploding
+			this.x +=   this.xSpeed ;
+			if(this.type==="lifeplus"){
+				this.y = this.yOrigine+ ArenaHeight/4 * Math.sin(this.x / 100);
+			}
+            var tmp = this.collision([player]);
+			if(tmp != null){
+				this.explodes();
+			}
+
+            if(tics % 7 == 1) {
+                this.cpt = (this.cpt + 1) % 8;
+            }
+       }else{
+            if(tics % 3 == 1) {
+                this.cptExplosion++;
+            }
+            if(this.cptExplosion>10){//end of animation
+                this.cptExplosion=0;
+                this.exists = false;
+				if(this.type === "lifeplus"){
+					player.nbOfLives++;
+				}
+            }
+        }
+    };
+}
+/////////////////////////////////
+
+/////////////////////////////////
 // Hero Player
 var player = {
     init : function(){
@@ -465,8 +594,9 @@ function updateItems() {
     "use strict"; 
     player.update();
     tics++;
+	//Enemy creation
      if(tics % 80 == 1) {
-         var rand = Math.floor(Math.random() * ArenaHeight);
+        var rand = Math.floor(Math.random() * ArenaHeight);
 		var rand1 = Math.floor(Math.random() * 10);
 		if(rand1<2){
 			enemies.add(new Enemy(ArenaWidth, rand,-1,"orange"));
@@ -478,11 +608,18 @@ function updateItems() {
 			enemies.add(new Enemy(ArenaWidth, rand,-2,"normal"));
 		}
     }
+	//Bonus creation
+	if(tics % 800 == 1) {
+		var rand2 = Math.floor(Math.random() * ArenaHeight);
+		var rand3 = Math.floor(Math.random() * 10);
+		bonuses.add(new Bonus(ArenaWidth, rand2,-1,"lifeplus"));
+	}
 	if(player.projectileSet.score>50 && player.fighting_boss==false){	//if the player's score is high enough, summons the boss
 		player.fighting_boss = true;
 		enemies.add(new Enemy(ArenaWidth-128, ArenaHeight/2,-2,"boss"));
 	}
     enemies.update();
+	bonuses.update();
 }
 function drawScene() {
     "use strict"; 
@@ -492,11 +629,13 @@ function drawItems() {
     "use strict"; 
     player.draw();
     enemies.draw();
+	bonuses.draw();
 }
 function clearItems() {
     "use strict"; 
     player.clear(); 
     enemies.clear();
+	bonuses.clear();
 }
 
 function clearScore() {
@@ -560,6 +699,7 @@ function init() {
  
     player.init();
     enemies.init();
+	bonuses.init();
     
 window.addEventListener("keydown", keyDownHandler, false);
 window.addEventListener("keyup", keyUpHandler, false);
